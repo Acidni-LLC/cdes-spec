@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.terprint.com/cdes/v1/coa.json",
+  "title": "CDES Certificate of Analysis",
+  "description": "Cannabis Data Exchange Standard - Certificate of Analysis (COA)",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://schemas.terprint.com/cdes/v1/coa.json"
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this COA"
+    },
+    "coaNumber": {
+      "type": "string",
+      "description": "Lab-assigned COA/report number"
+    },
+    "lab": {
+      "type": "object",
+      "description": "Testing laboratory information",
+      "properties": {
+        "name": { "type": "string" },
+        "licenseNumber": { "type": "string" },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": { "type": "string" },
+            "city": { "type": "string" },
+            "state": { "type": "string" },
+            "postalCode": { "type": "string" },
+            "country": { "type": "string", "default": "US" }
+          }
+        },
+        "phone": { "type": "string" },
+        "website": { "type": "string", "format": "uri" },
+        "accreditations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Lab accreditations (ISO 17025, etc.)"
+        }
+      },
+      "required": ["name"]
+    },
+    "sample": {
+      "type": "object",
+      "description": "Sample information",
+      "properties": {
+        "sampleId": { "type": "string" },
+        "batchNumber": { "type": "string" },
+        "productName": { "type": "string" },
+        "strainName": { "type": "string" },
+        "productType": {
+          "type": "string",
+          "enum": ["flower", "pre-roll", "concentrate", "vape", "edible", "tincture", "topical", "capsule", "other"]
+        },
+        "sampleWeight": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" },
+            "unit": { "type": "string", "enum": ["g", "mg", "oz"] }
+          }
+        },
+        "receivedDate": { "type": "string", "format": "date" },
+        "testedDate": { "type": "string", "format": "date" },
+        "harvestDate": { "type": "string", "format": "date" },
+        "producerId": { "type": "string" },
+        "producerName": { "type": "string" },
+        "producerLicense": { "type": "string" }
+      },
+      "required": ["batchNumber", "productName"]
+    },
+    "cannabinoidProfile": {
+      "$ref": "https://schemas.terprint.com/cdes/v1/cannabinoid-profile.json"
+    },
+    "terpeneProfile": {
+      "$ref": "https://schemas.terprint.com/cdes/v1/terpene-profile.json"
+    },
+    "potencyResults": {
+      "type": "object",
+      "description": "Potency test results",
+      "properties": {
+        "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested"] },
+        "totalThc": { "type": "number", "minimum": 0 },
+        "totalCbd": { "type": "number", "minimum": 0 },
+        "totalCannabinoids": { "type": "number", "minimum": 0 }
+      }
+    },
+    "safetyTests": {
+      "type": "object",
+      "description": "Safety and compliance test results",
+      "properties": {
+        "microbials": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested"] },
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "analyte": { "type": "string" },
+                  "result": { "type": "string" },
+                  "limit": { "type": "string" },
+                  "status": { "type": "string", "enum": ["pass", "fail", "detected", "not-detected"] }
+                }
+              }
+            }
+          }
+        },
+        "pesticides": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested"] },
+            "analytes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "result": { "type": "number" },
+                  "limit": { "type": "number" },
+                  "unit": { "type": "string" },
+                  "status": { "type": "string", "enum": ["pass", "fail", "detected", "not-detected"] }
+                }
+              }
+            }
+          }
+        },
+        "heavyMetals": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested"] },
+            "analytes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "enum": ["arsenic", "cadmium", "lead", "mercury"] },
+                  "result": { "type": "number" },
+                  "limit": { "type": "number" },
+                  "unit": { "type": "string" },
+                  "status": { "type": "string", "enum": ["pass", "fail"] }
+                }
+              }
+            }
+          }
+        },
+        "residualSolvents": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested", "not-applicable"] },
+            "analytes": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "mycotoxins": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested"] },
+            "analytes": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "moisture": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested"] },
+            "result": { "type": "number" },
+            "limit": { "type": "number" },
+            "unit": { "type": "string", "default": "percent" }
+          }
+        },
+        "waterActivity": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested"] },
+            "result": { "type": "number" },
+            "limit": { "type": "number" }
+          }
+        },
+        "foreignMatter": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "enum": ["pass", "fail", "pending", "not-tested"] },
+            "notes": { "type": "string" }
+          }
+        }
+      }
+    },
+    "overallStatus": {
+      "type": "string",
+      "enum": ["pass", "fail", "pending", "partial"],
+      "description": "Overall pass/fail status of all tests"
+    },
+    "issuedDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date COA was issued"
+    },
+    "expirationDate": {
+      "type": "string",
+      "format": "date",
+      "description": "COA expiration date (if applicable)"
+    },
+    "qrCode": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to QR code or verification page"
+    },
+    "pdfUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to original PDF COA"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or comments"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "CDES metadata",
+      "properties": {
+        "cdesVersion": { "type": "string", "const": "1.0" },
+        "parsedDate": { "type": "string", "format": "date-time" },
+        "parsedBy": { "type": "string" },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Parsing confidence score"
+        }
+      }
+    }
+  },
+  "required": ["id", "lab", "sample", "overallStatus"],
+  "additionalProperties": false
+}
