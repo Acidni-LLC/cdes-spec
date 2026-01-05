@@ -1,0 +1,104 @@
+name: Validate Schemas
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - "schemas/**/*.json"
+            - ".github/workflows/validate-schemas.yml"
+    pull_request:
+        branches: [main]
+        paths:
+            - "schemas/**/*.json"
+
+jobs:
+    validate:
+        name: Validate JSON Schemas
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            - name: Install dependencies
+              run: npm install ajv ajv-formats
+
+            - name: Validate schemas against Draft 2020-12
+              run: |
+                  cat << 'EOF' > validate.mjs
+                  import Ajv2020 from 'ajv/dist/2020.js';
+                  import addFormats from 'ajv-formats';
+                  import { readFileSync, readdirSync, statSync } from 'fs';
+                  import { join, relative } from 'path';
+
+                  const ajv = new Ajv2020({ strict: true, allErrors: true });
+                  addFormats(ajv);
+
+                  function findJsonFiles(dir) {
+                    const files = [];
+                    if (!statSync(dir).isDirectory()) return files;
+                    for (const entry of readdirSync(dir)) {
+                      const path = join(dir, entry);
+                      if (statSync(path).isDirectory()) {
+                        files.push(...findJsonFiles(path));
+                      } else if (entry.endsWith('.json')) {
+                        files.push(path);
+                      }
+                    }
+                    return files;
+                  }
+
+                  const schemaDir = 'schemas';
+                  const files = findJsonFiles(schemaDir);
+                  let hasErrors = false;
+
+                  console.log(`Found ${files.length} schema files\n`);
+
+                  for (const file of files) {
+                    const relPath = relative('.', file);
+                    try {
+                      const schema = JSON.parse(readFileSync(file, 'utf8'));
+                      
+                      if (!schema.$schema) {
+                        console.error(`❌ ${relPath}: Missing $schema`);
+                        hasErrors = true;
+                        continue;
+                      }
+                      
+                      if (!schema.$id) {
+                        console.error(`❌ ${relPath}: Missing $id`);
+                        hasErrors = true;
+                        continue;
+                      }
+
+                      try {
+                        ajv.compile(schema);
+                        console.log(`✅ ${relPath}`);
+                      } catch (e) {
+                        console.error(`❌ ${relPath}: ${e.message}`);
+                        hasErrors = true;
+                      }
+                    } catch (e) {
+                      console.error(`❌ ${relPath}: Invalid JSON - ${e.message}`);
+                      hasErrors = true;
+                    }
+                  }
+
+                  process.exit(hasErrors ? 1 : 0);
+                  EOF
+
+                  node validate.mjs
+
+            - name: Validate example documents
+              run: |
+                  if [ -d "examples" ]; then
+                    echo "Validating example documents..."
+                    # Add example validation logic here
+                  else
+                    echo "No examples directory found, skipping"
+                  fi
