@@ -1,0 +1,77 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.terprint.com/cdes/v1/rating-aggregate.json",
+  "title": "CDES-CX Rating Aggregate",
+  "description": "Cannabis Data Exchange Standard - Customer Experience Extension. Aggregate rating summary for a cannabis strain, batch, product, or dispensary.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://schemas.terprint.com/cdes/v1/rating-aggregate.json"
+    },
+    "subjectType": {
+      "type": "string",
+      "enum": ["strain", "batch", "product", "dispensary"],
+      "description": "The type of entity this aggregate summarizes"
+    },
+    "subjectId": {
+      "type": "string",
+      "description": "Identifier of the rated entity"
+    },
+    "averageScore": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Average rating score across all users"
+    },
+    "totalRatings": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of ratings"
+    },
+    "distribution": {
+      "type": "object",
+      "description": "Count of ratings per score value",
+      "properties": {
+        "1": { "type": "integer", "minimum": 0, "description": "Count of 1-star ratings" },
+        "2": { "type": "integer", "minimum": 0, "description": "Count of 2-star ratings" },
+        "3": { "type": "integer", "minimum": 0, "description": "Count of 3-star ratings" },
+        "4": { "type": "integer", "minimum": 0, "description": "Count of 4-star ratings" },
+        "5": { "type": "integer", "minimum": 0, "description": "Count of 5-star ratings" }
+      }
+    },
+    "topTags": {
+      "type": "array",
+      "description": "Most frequently used tags across all ratings",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tag": { "type": "string" },
+          "count": { "type": "integer", "minimum": 0 }
+        },
+        "required": ["tag", "count"]
+      }
+    },
+    "totalFavorites": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of users who favorited this item"
+    },
+    "totalReviews": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of ratings that include review text"
+    },
+    "subjectName": {
+      "type": "string",
+      "description": "Display name of the rated entity"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when aggregate was last recalculated"
+    }
+  },
+  "required": ["subjectType", "subjectId", "averageScore", "totalRatings"],
+  "additionalProperties": false
+}

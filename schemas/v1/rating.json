@@ -1,0 +1,112 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.terprint.com/cdes/v1/rating.json",
+  "title": "CDES-CX Rating",
+  "description": "Cannabis Data Exchange Standard - Customer Experience Extension. Individual user rating for a cannabis strain, batch, product, or dispensary.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://schemas.terprint.com/cdes/v1/rating.json"
+    },
+    "ratingId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this rating"
+    },
+    "userId": {
+      "type": "string",
+      "description": "Unique identifier of the user who created this rating"
+    },
+    "subjectType": {
+      "type": "string",
+      "enum": ["strain", "batch", "product", "dispensary"],
+      "description": "The type of entity being rated"
+    },
+    "subjectId": {
+      "type": "string",
+      "description": "Identifier of the entity being rated"
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Rating score from 1 (poor) to 5 (excellent)"
+    },
+    "reviewText": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Optional written review (max 1000 characters)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["flavor", "potency", "value", "aroma", "appearance", "effects", "medical"]
+      },
+      "description": "Descriptive tags highlighting rating aspects"
+    },
+    "isFavorite": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user has favorited this item"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Denormalized context about the rated item",
+      "properties": {
+        "strainName": {
+          "type": "string",
+          "description": "Name of the strain (for display without lookup)"
+        },
+        "dispensary": {
+          "type": "string",
+          "description": "Dispensary name where product was obtained"
+        },
+        "batchNumber": {
+          "type": "string",
+          "description": "Batch number if rating a specific batch"
+        },
+        "thcPercent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "THC percentage at time of rating"
+        },
+        "cbdPercent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "CBD percentage at time of rating"
+        },
+        "totalTerpenes": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total terpene percentage at time of rating"
+        }
+      }
+    },
+    "cdesVersion": {
+      "type": "string",
+      "default": "1.0.0",
+      "description": "CDES specification version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Application or system that created this rating",
+      "examples": ["terprint-teams", "terprint-portal", "terprint-web"]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when rating was created"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when rating was last updated"
+    }
+  },
+  "required": ["ratingId", "userId", "subjectType", "subjectId", "score"],
+  "additionalProperties": false
+}

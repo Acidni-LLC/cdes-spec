@@ -1,4 +1,4 @@
-﻿# CDES Specifications
+# CDES Specifications
 
 > **Cannabis Data Exchange Standard - Official Specifications**
 
@@ -31,6 +31,8 @@ print(f"Valid: {result.valid}")
 | [terpene-profile.json](./schemas/v1/terpene-profile.json) | Terpene measurements | Stable |
 | [cannabinoid-profile.json](./schemas/v1/cannabinoid-profile.json) | Cannabinoid measurements | Stable |
 | [terpene.json](./schemas/v1/terpene.json) | Terpene definitions | Stable |
+| [rating.json](./schemas/v1/rating.json) | User ratings and reviews (CX extension) | Stable |
+| [rating-aggregate.json](./schemas/v1/rating-aggregate.json) | Community rating aggregates (CX extension) | Stable |
 
 ## Reference Data
 
