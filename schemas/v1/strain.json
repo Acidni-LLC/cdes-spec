@@ -1,4 +1,4 @@
-{
+﻿{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.terprint.com/cdes/v1/strain.json",
   "title": "CDES Strain",
@@ -26,7 +26,7 @@
     },
     "type": {
       "type": "string",
-      "enum": ["indica", "sativa", "hybrid", "indica-dominant", "sativa-dominant", "balanced"],
+      "enum": ["indica", "sativa", "hybrid", "cbd", "unknown", "indica-dominant", "sativa-dominant", "balanced"],
       "description": "Strain classification"
     },
     "indicaPercent": {
@@ -196,3 +196,4 @@
   "required": ["id", "name", "type"],
   "additionalProperties": false
 }
+
